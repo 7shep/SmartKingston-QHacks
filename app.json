@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "SmartKingston-QHacks",
+    "slug": "smartkingston-qhacks",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.qhacks.smartkingston",
+      "infoPlist": {
+        "NSCameraUsageDescription": "We need your permission to use your camera.",
+        "NSPhotoLibraryUsageDescription": "We need your permission to access your photo library.",
+        "NSMicrophoneUsageDescription": "We need your permission to use your microphone.",
+        "UIBackgroundModes": [
+          "fetch",
+          "remote-notification"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.qhacks.smartkingston"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "13faff05-54a4-49d4-bfb9-e6750d50fcb7"
+      },
+      "router": {
+        "origin": false
+      }
+    },
+    "owner": "7shep"
+  }
+}
