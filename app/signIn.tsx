@@ -3,22 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import supabase from './post-auth/supabaseClient';
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
 
-// type RootStackParamList = {
-//   SignIn: undefined;
-//   SignUp: undefined;
-//   Home: undefined;
-// };
 
-// type SignInScreenNavigationProp = StackNavigationProp<RootStackParamList, 'SignIn'>;
-// type SignInScreenRouteProp = RouteProp<RootStackParamList, 'SignIn'>;
-
-// type Props = {
-//   navigation: SignInScreenNavigationProp;
-//   route: SignInScreenRouteProp;
-// };
 
 const SignIn = ({ navigation }: Props) => {
     const [email, setEmail] = useState('');
@@ -28,12 +14,20 @@ const SignIn = ({ navigation }: Props) => {
     useEffect(() => {
         const loadFonts = async () => {
             await Font.loadAsync({
-                'BlessedDay': require('../assets/fonts/BlessedDay-dylK.otf'), // Correct the file path
+                'BlessedDay': require('../assets/fonts/BlessedDay-dylK.otf'), 
             });
             setFontsLoaded(true);
         };
 
+        const checkUser = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                navigation.navigate('Home');
+            }
+        };
+
         loadFonts();
+        checkUser();
     }, []);
 
     if (!fontsLoaded) {
@@ -108,7 +102,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         textAlign: 'center',
         color: '#EFBCD5',
-        fontFamily: 'BlessedDay', // Apply the BlessedDay font
+        fontFamily: 'BlessedDay', 
     },
     input: {
         width: '100%',
@@ -126,7 +120,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
         width: '100%',
-        marginBottom: 20, // Add margin to separate buttons
+        marginBottom: 20, 
     },
     signInButtonText: {
         color: '#EFBCD5',

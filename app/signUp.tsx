@@ -10,7 +10,6 @@ const SignUp = ({ navigation }) => {
     //const [postalCode, setPostalCode] = useState(null);
 
     const handleSignUp = () => {
-        // Handle sign up logic here
         console.log('Email:', email);
         console.log('Password:', password);
         console.log('Username:', username);
@@ -30,7 +29,7 @@ const SignUp = ({ navigation }) => {
             return;
         } else if (password.length < 6) {
             Alert.alert('Error', 'Password must be at least 6 characters long');
-            setPassword(''); // Clear the password field
+            setPassword(''); 
         }    
          else {
             console.log('User signed up successfully', data);
@@ -117,7 +116,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
         width: '100%',
-        marginBottom: 20, // Add margin to separate buttons
+        marginBottom: 20, 
     },
     signUpButtonText: {
         color: '#EFBCD5',

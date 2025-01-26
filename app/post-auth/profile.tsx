@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, Image, TouchableOpacity, ImageBackground } from 'react-native';
-import supabase from './supabaseClient'; // Import the configured Supabase client
+import supabase from './supabaseClient'; 
 import * as ImagePicker from 'expo-image-picker';
 
-const DEFAULT_PROFILE_IMAGE = 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg'; // Default profile image URL
-const CROSS_HATCH_IMAGE = 'https://www.transparenttextures.com/patterns/cross-hatch.png'; // Cross-hatch background image URL
+const DEFAULT_PROFILE_IMAGE = 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg'; 
+const CROSS_HATCH_IMAGE = 'https://www.transparenttextures.com/patterns/cross-hatch.png'; // for the not editable
 
 const Profile = ({ navigation }) => {
     const [name, setName] = useState('');
@@ -14,7 +14,7 @@ const Profile = ({ navigation }) => {
     const [profileImage, setProfileImage] = useState(DEFAULT_PROFILE_IMAGE);
 
     useEffect(() => {
-        // Get the email and username of the current user from Supabase
+        // get supabase profile info
         const fetchUserProfile = async () => {
             const { data: { user }, error } = await supabase.auth.getUser();
             if (error) {
@@ -42,7 +42,6 @@ const Profile = ({ navigation }) => {
     }, []);
 
     const handleSave = async () => {
-        // Handle save logic here
         const { error } = await supabase.auth.updateUser({
             data: { 
                 name: name,

@@ -11,7 +11,7 @@ import AddEvent from './post-auth/addevent';
 import IsThisRecyclable from './post-auth/isthisrecyclable';
 import MessageContents from './post-auth/messagecontents';
 import NewMessage from './post-auth/newmessage';
-import supabase from './post-auth/supabaseClient'; // Ensure this path is correct
+import supabase from './post-auth/supabaseClient'; 
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
 
@@ -23,7 +23,7 @@ const PreSignUp = ({ navigation }) => {
   useEffect(() => {
     const loadFonts = async () => {
       await Font.loadAsync({
-        'BlessedDay': require('../assets/fonts/BlessedDay-dylK.otf'), // Correct the file path
+        'BlessedDay': require('../assets/fonts/BlessedDay-dylK.otf'), 
       });
       setFontsLoaded(true);
     };
@@ -54,13 +54,13 @@ const PreSignUp = ({ navigation }) => {
       <View style={styles.buttonSection}>
         <TouchableOpacity
           style={styles.newUserButton}
-          onPress={() => navigation.navigate('SignUp')} // Navigate to SignUp
+          onPress={() => navigation.navigate('SignUp')} 
         >
           <Text style={styles.buttonText}>New User</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.existingUserButton}
-          onPress={() => navigation.navigate('SignIn')} // Navigate to SignIn
+          onPress={() => navigation.navigate('SignIn')} 
         >
           <Text style={styles.buttonText}>Existing User</Text>
         </TouchableOpacity>
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 36,
-    fontFamily: 'BlessedDay', // Apply the BlessedDay font
+    fontFamily: 'BlessedDay', 
     color: '#EFBCD5',
   },
   buttonSection: {
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 31,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10, // Add margin to separate buttons
+    marginBottom: 10, 
   },
   existingUserButton: {
     backgroundColor: '#18ab29',
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#ffffff',
     fontSize: 17,
-    fontFamily: 'Arial', // Use a system font or custom font
+    fontFamily: 'Arial', 
     textShadowColor: '#2f6627',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,

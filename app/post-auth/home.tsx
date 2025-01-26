@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert, FlatList, Image, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import supabase from './supabaseClient'; 
-import NavigationBar from '../components/navigationbar';
+import NavigationBar from '../components/navigationbar'; 
 
 const DEFAULT_PROFILE_IMAGE = 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg'; // Default profile image URL
 
@@ -80,7 +80,7 @@ const Home = () => {
                 renderItem={renderMessage}
                 contentContainerStyle={styles.messageList}
             />
-            <NavigationBar /> {/* Include NavigationBar */}
+            <NavigationBar /> 
         </View>
     );
 };

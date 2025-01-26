@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, FlatList } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import supabase from './supabaseClient'; // Ensure this path is correct
-import NavigationBar from '../components/navigationbar'; // Import NavigationBar
+import supabase from './supabaseClient'; 
+import NavigationBar from '../components/navigationbar'; 
 
-const DEFAULT_PROFILE_IMAGE = 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg'; // Default profile image URL
+const DEFAULT_PROFILE_IMAGE = 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg';
 
 const MessageContents = () => {
     const route = useRoute();
@@ -18,7 +18,7 @@ const MessageContents = () => {
                 .from('comments')
                 .select('*')
                 .eq('message_id', message.id)
-                .order('created_at', { ascending: false }); // Sort by created_at in descending order
+                .order('created_at', { ascending: false }); 
 
             if (commentsError) {
                 console.log('Error fetching comments:', commentsError.message);
@@ -56,7 +56,7 @@ const MessageContents = () => {
                 return;
             }
 
-            setComments([commentData[0], ...comments]); // Add new comment to the top of the list
+            setComments([commentData[0], ...comments]); //puts new comment to the top
             setNewComment('');
         }
     };
@@ -101,7 +101,7 @@ const MessageContents = () => {
                 renderItem={renderComment}
                 contentContainerStyle={styles.commentsList}
             />
-            <NavigationBar /> {/* Include NavigationBar */}
+            <NavigationBar /> 
         </View>
     );
 };

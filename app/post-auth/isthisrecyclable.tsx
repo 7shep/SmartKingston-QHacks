@@ -95,7 +95,7 @@ const IsThisRecyclable = () => {
     try {
       const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
   
-      // Google Cloud Vision API request
+    
       const visionResponse = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${GCLOUD_KEY}`, {
         method: 'POST',
         body: JSON.stringify({
@@ -120,7 +120,6 @@ const IsThisRecyclable = () => {
       console.log('Labels:', labels);
       console.log('Text:', text);
   
-      // Gemini API request for disposal information
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_KEY}`, {
         method: 'POST',
         headers: {
@@ -143,7 +142,7 @@ const IsThisRecyclable = () => {
       const disposalAdvice = result.candidates[0].content.parts[0].text;
       console.log('Disposal Advice:', disposalAdvice);
   
-      // Gemini API request to condense the information and remove special characters
+      // condense the response with my insane prompt :O
       const condenseResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_KEY}`, {
         method: 'POST',
         headers: {
