@@ -7,4 +7,5 @@ I slept for about 35 minutes during this whole event, and as it progressed, my o
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 
-## Follow my [Linkedin?][https://www.linkedin.com/in/7shep]
+## Follow my Linkedin?
+[Here][[https://www.linkedin.com/in/7shep]
