@@ -1,55 +1,69 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { supabase } from './post-auth/supabaseClient';
-import * as Notifications from 'expo-notifications';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import supabase from './post-auth/supabaseClient';
+import * as Font from 'expo-font';
+import AppLoading from 'expo-app-loading';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
 
+// type RootStackParamList = {
+//   SignIn: undefined;
+//   SignUp: undefined;
+//   Home: undefined;
+// };
 
-//Notification Handler
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: false,
-    }),
-});
+// type SignInScreenNavigationProp = StackNavigationProp<RootStackParamList, 'SignIn'>;
+// type SignInScreenRouteProp = RouteProp<RootStackParamList, 'SignIn'>;
 
-const SignIn = ({ navigation }) => {
+// type Props = {
+//   navigation: SignInScreenNavigationProp;
+//   route: SignInScreenRouteProp;
+// };
+
+const SignIn = ({ navigation }: Props) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [fontsLoaded, setFontsLoaded] = useState(false);
 
+    useEffect(() => {
+        const loadFonts = async () => {
+            await Font.loadAsync({
+                'BlessedDay': require('../assets/fonts/BlessedDay-dylK.otf'), // Correct the file path
+            });
+            setFontsLoaded(true);
+        };
 
+        loadFonts();
+    }, []);
+
+    if (!fontsLoaded) {
+        return <AppLoading />;
+    }
 
     const handleSignIn = async () => {
-        // Handle sign in logic here
-        console.log('Email:', email);
-        console.log('Password:', password);
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email.toLowerCase(),
+                password: password,
+            });
 
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email.toLowerCase(),
-            password: password,
-        });
-
-        if (error) {
-            console.log('Error signing in:', error.message);
-            Alert.alert('Error', 'Invalid email or password');
-            return;
-        } else {
-            console.log('User signed in successfully');
-            await sendPushNotification();
-            navigation.navigate('Home');   
+            if (error) {
+                console.log('Error signing in:', error.message);
+                Alert.alert('Error', 'Invalid email or password');
+                return;
+            } else {
+                console.log('User signed in successfully:', data);
+                navigation.navigate('Home');
+            }
+        } catch (err) {
+            console.error('Unexpected error during sign in:', err);
+            Alert.alert('Error', 'An unexpected error occurred');
         }
     };
 
-    const sendPushNotification = async () => {
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: 'Welcome to SmartKingston!',
-                body: 'You are now signed in.',
-            },
-            trigger: null,
-        });
+    const handleGoToSignUp = () => {
+        navigation.navigate('SignUp');
     };
-
 
     return (
         <View style={styles.container}>
@@ -57,7 +71,7 @@ const SignIn = ({ navigation }) => {
             <TextInput
                 style={styles.input}
                 placeholder="Email"
-                placeholderTextColor="#d3d3d3"
+                placeholderTextColor="#BE97C6"
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
@@ -65,14 +79,18 @@ const SignIn = ({ navigation }) => {
             <TextInput
                 style={styles.input}
                 placeholder="Password"
-                placeholderTextColor="#d3d3d3"
+                placeholderTextColor="#BE97C6"
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
             />
-            <View style={styles.buttonContainer}>
-                <Button title="Sign In" onPress={handleSignIn} color="#841584" />
-            </View>
+            <TouchableOpacity style={styles.signInButton} onPress={handleSignIn}>
+                <Text style={styles.signInButtonText}>Sign In</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.goToSignUpButton} onPress={handleGoToSignUp}>
+                <Text style={styles.goToSignUpText}>Don't have an account?</Text>
+                <Text style={styles.goToSignUpText}>Go To Sign Up</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -81,24 +99,50 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#2E294E',
         padding: 16,
     },
     title: {
         fontSize: 24,
         marginBottom: 16,
         textAlign: 'center',
+        color: '#EFBCD5',
+        fontFamily: 'BlessedDay', // Apply the BlessedDay font
     },
     input: {
+        width: '100%',
         height: 40,
-        borderColor: 'gray',
+        borderColor: '#BE97C6',
         borderWidth: 1,
         marginBottom: 12,
         paddingHorizontal: 8,
         borderRadius: 8,
+        color: '#EFBCD5',
     },
-    buttonContainer: {
-        borderRadius: 8,
-        overflow: 'hidden',
+    signInButton: {
+        backgroundColor: '#8661C1',
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        width: '100%',
+        marginBottom: 20, // Add margin to separate buttons
+    },
+    signInButtonText: {
+        color: '#EFBCD5',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    goToSignUpButton: {
+        backgroundColor: '#4B5267',
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        width: '100%',
+    },
+    goToSignUpText: {
+        color: '#EFBCD5',
+        fontSize: 16,
     },
 });
 

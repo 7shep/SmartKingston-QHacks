@@ -1,21 +1,48 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Text, View, Image, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
-import * as Permissions from 'expo-permissions';
-import SignUp from './signUp'; // Import the SignUp component
-import SignIn from './signIn'; // Import the SignIn component
-import Home from './post-auth/home'; // Import the Home component
-import Profile from './post-auth/profile'; // Import the Profile component
-import Events from './post-auth/events'; // Import the Events component
-import AddEvent from './post-auth/addevent'; // Import the AddEvent component
-import IsThisRecyclable from './post-auth/isthisrecyclable'; // Import the IsThisRecyclable component
+import SignUp from './signUp'; 
+import SignIn from './signIn'; 
+import Home from './post-auth/home';
+import Profile from './post-auth/profile';
+import Events from './post-auth/events';
+import AddEvent from './post-auth/addevent';
+import IsThisRecyclable from './post-auth/isthisrecyclable';
+import MessageContents from './post-auth/messagecontents';
+import NewMessage from './post-auth/newmessage';
+import supabase from './post-auth/supabaseClient'; // Ensure this path is correct
+import * as Font from 'expo-font';
+import AppLoading from 'expo-app-loading';
 
 const Stack = createStackNavigator();
 
-const HomeScreen = ({ navigation }) => {
+const PreSignUp = ({ navigation }) => {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadFonts = async () => {
+      await Font.loadAsync({
+        'BlessedDay': require('../assets/fonts/BlessedDay-dylK.otf'), // Correct the file path
+      });
+      setFontsLoaded(true);
+    };
+
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigation.navigate('Home');
+      }
+    };
+
+    loadFonts();
+    checkUser();
+  }, []);
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
   return (
     <View style={styles.container}>
       {/* Section 1: Title */}
@@ -24,7 +51,7 @@ const HomeScreen = ({ navigation }) => {
       </View>
 
       {/* Button Section */}
-      <View style={styles.container}>
+      <View style={styles.buttonSection}>
         <TouchableOpacity
           style={styles.newUserButton}
           onPress={() => navigation.navigate('SignUp')} // Navigate to SignUp
@@ -38,161 +65,76 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.buttonText}>Existing User</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Section 3: AI Logo */}
-      <View style={styles.logoSection}>
-        <Image
-          source={{ uri: "https://via.placeholder.com/150" }} // Placeholder image
-          style={styles.logo}
-        />
-      </View>
     </View>
   );
 };
 
 const App = () => {
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>([]);
-  const [notification, setNotification] = useState<Notifications.Notification | undefined>(
-    undefined
-  );
-  const notificationListener = useRef<Notifications.EventSubscription>();
-  const responseListener = useRef<Notifications.EventSubscription>();
-
-  useEffect(() => {
-    registerForPushNotificationsAsync().then(token => token && setExpoPushToken(token));
-
-    if (Platform.OS === 'android') {
-      Notifications.getNotificationChannelsAsync().then(value => setChannels(value ?? []));
-    }
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
-    });
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
-    });
-
-    return () => {
-      notificationListener.current &&
-        Notifications.removeNotificationSubscription(notificationListener.current);
-      responseListener.current &&
-        Notifications.removeNotificationSubscription(responseListener.current);
-    };
-  }, []);
-
   return (
       <Stack.Navigator initialRouteName="PreSignUp">
-        <Stack.Screen name="PreSignUp" component={HomeScreen} />
+        <Stack.Screen name="PreSignUp" component={PreSignUp} />
+        <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="SignIn" component={SignIn} />
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Profile" component={Profile} />
-        <Stack.Screen name="Events" component={Events} />
         <Stack.Screen name="AddEvent" component={AddEvent} />
         <Stack.Screen name="IsThisRecyclable" component={IsThisRecyclable} />
+        <Stack.Screen name="MessageContents" component={MessageContents} />
+        <Stack.Screen name="NewMessage" component={NewMessage} />
+        <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="Events" component={Events} />
       </Stack.Navigator>
   );
 };
-
-async function registerForPushNotificationsAsync() {
-  let token;
-
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('myNotificationChannel', {
-      name: 'A channel is needed for the permissions prompt to appear',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    // Learn more about projectId:
-    // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-    // EAS projectId is used here.
-    try {
-      const projectId =
-        Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
-      if (!projectId) {
-        throw new Error('Project ID not found');
-      }
-      token = (
-        await Notifications.getExpoPushTokenAsync({
-          projectId,
-        })
-      ).data;
-      console.log(token);
-    } catch (e) {
-      token = `${e}`;
-    }
-  } else {
-    alert('Must use physical device for Push Notifications');
-  }
-
-  return token;
-}
 
 export default App;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
-  },
-  newUserButton: {
-    backgroundColor: "#18ab29",
-    borderRadius: 28,
-    borderWidth: 1,
-    borderColor: "#18ab29",
-    paddingVertical: 16,
-    paddingHorizontal: 31,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  existingUserButton: {
-    backgroundColor: "#18ab29",
-    borderRadius: 28,
-    borderWidth: 1,
-    borderColor: "#18ab29",
-    paddingVertical: 16,
-    paddingHorizontal: 31,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
-  },
-  buttonText: {
-    color: "#ffffff",
-    fontSize: 17,
-    fontFamily: "Arial", // Use a system font or custom font
-    textShadowColor: "#2f6627",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    backgroundColor: '#2E294E',
   },
   titleSection: {
     marginBottom: 20,
   },
   titleText: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 36,
+    fontFamily: 'BlessedDay', // Apply the BlessedDay font
+    color: '#EFBCD5',
   },
-  logoSection: {
-    marginTop: 20,
+  buttonSection: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  logo: {
-    width: 150,
-    height: 150,
+  newUserButton: {
+    backgroundColor: '#18ab29',
+    borderRadius: 28,
+    borderWidth: 1,
+    borderColor: '#18ab29',
+    paddingVertical: 16,
+    paddingHorizontal: 31,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10, // Add margin to separate buttons
+  },
+  existingUserButton: {
+    backgroundColor: '#18ab29',
+    borderRadius: 28,
+    borderWidth: 1,
+    borderColor: '#18ab29',
+    paddingVertical: 16,
+    paddingHorizontal: 31,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 17,
+    fontFamily: 'Arial', // Use a system font or custom font
+    textShadowColor: '#2f6627',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
 });

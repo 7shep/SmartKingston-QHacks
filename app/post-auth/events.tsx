@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import supabase from './supabaseClient'; // Import the configured Supabase client
+import supabase from './supabaseClient'; 
+import moment from 'moment';
 
 const Events = () => {
     const navigation = useNavigation();
@@ -26,40 +27,32 @@ const Events = () => {
         fetchEvents();
     }, []);
 
+    const handleAddEvent = () => {
+        navigation.navigate('AddEvent');
+    };
+
     return (
         <View style={styles.container}>
-            <View style={styles.headerContainer}>
-                <Text style={styles.headerText}>SmartKingston</Text>
-                <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddEvent', { sessionToken })}>
-                    <Text style={styles.addButtonText}>Add Event</Text>
-                </TouchableOpacity>
+            <View style={styles.header}>
+                <Text style={styles.title}>Upcoming Events</Text>
             </View>
-            <View style={styles.main}>
-                <FlatList
-                    data={events}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => (
-                        <View style={styles.event}>
-                            <Text style={styles.company}>Company: {item.company}</Text>
-                            <Text style={styles.message}>{item.message}</Text>
-                            <Text style={styles.datePosted}>Date Posted: {new Date(item.date_posted).toLocaleString()}</Text>
-                        </View>
-                    )}
-                />
-            </View>
-            <View style={styles.footer}>
-                <View style={styles.nav}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-                        <Text style={styles.navText}>Home</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-                        <Text style={styles.navText}>Profile</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('IsThisRecyclable')}>
-                        <Text style={styles.navText}>IsThisRecyclable</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            <TouchableOpacity style={styles.addEventButton} onPress={handleAddEvent}>
+                <Text style={styles.addEventButtonText}>Add Event</Text>
+            </TouchableOpacity>
+            <FlatList
+                data={events}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                    <View style={styles.event}>
+                        {item.image_url && (
+                            <Image source={{ uri: item.image_url }} style={styles.eventImage} />
+                        )}
+                        <Text style={styles.company}>{item.company}</Text>
+                        <Text style={styles.message}>{item.message}</Text>
+                        <Text style={styles.date}>{moment(item.date_posted).format('MMMM Do YYYY, h:mm a')}</Text>
+                    </View>
+                )}
+            />
         </View>
     );
 };
@@ -67,64 +60,56 @@ const Events = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        flexDirection: 'column',
+        padding: 16,
+        backgroundColor: '#2E294E',
     },
-    headerContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    header: {
+        marginBottom: 20,
+    },
+    title: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#EFBCD5',
+        textAlign: 'center',
+    },
+    addEventButton: {
+        backgroundColor: '#8661C1',
+        padding: 15,
+        borderRadius: 10,
+        marginVertical: 20,
         alignItems: 'center',
-        padding: 10,
-        backgroundColor: '#f8f8f8',
     },
-    headerText: {
-        fontSize: 24,
+    addEventButtonText: {
+        color: '#EFBCD5',
+        fontSize: 18,
         fontWeight: 'bold',
     },
-    addButton: {
-        backgroundColor: '#841584',
-        padding: 10,
-        borderRadius: 5,
-    },
-    addButtonText: {
-        color: '#fff',
-        fontSize: 16,
-    },
-    main: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     event: {
-        padding: 10,
-        marginVertical: 5,
+        padding: 15,
+        marginVertical: 10,
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: '#BE97C6',
         borderRadius: 5,
-        backgroundColor: '#fff',
+        backgroundColor: '#4B5267',
+    },
+    eventImage: {
+        width: '100%',
+        height: 200,
+        borderRadius: 5,
+        marginBottom: 10,
     },
     company: {
         fontWeight: 'bold',
+        color: '#EFBCD5',
+        marginBottom: 5,
     },
     message: {
-        marginTop: 5,
+        color: '#BE97C6',
+        marginBottom: 5,
     },
-    datePosted: {
-        marginTop: 5,
+    date: {
+        color: '#BE97C6',
         fontSize: 12,
-        color: '#888',
-    },
-    footer: {
-        padding: 10,
-        backgroundColor: '#f8f8f8',
-        textAlign: 'center',
-    },
-    nav: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-    },
-    navText: {
-        fontSize: 16,
-        color: '#841584',
     },
 });
 

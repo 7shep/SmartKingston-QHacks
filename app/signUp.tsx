@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { createClient } from '@supabase/supabase-js';
-import { SUPABASE_KEY } from '@env';
-
-const supabaseUrl = 'https://bjdsrtgezbdaoltvleor.supabase.co';
-
-const supabase = createClient(supabaseUrl, SUPABASE_KEY);
+import supabase from './post-auth/supabaseClient';
 
 const SignUp = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -77,8 +73,15 @@ const SignUp = ({ navigation }) => {
                 onChangeText={setPassword}
                 secureTextEntry
             />
-            <Button title="Sign Up" onPress={handleSignUp} />
+            <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
+                <Text style={styles.signUpButtonText}>Sign Up</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.goToSignInButton}>
+            <Text style={styles.goToSignInText}>Already have an account?</Text>
+            <Text style={styles.goToSignInText}>Go To Sign In</Text>
+        </TouchableOpacity>
         </View>
+        
     );
 };
 
@@ -88,20 +91,49 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#2E294E',
         padding: 16,
     },
     title: {
         fontSize: 24,
         marginBottom: 16,
         textAlign: 'center',
+        color: '#EFBCD5',
     },
     input: {
+        width: '100%',
         height: 40,
-        borderColor: 'gray',
+        borderColor: '#BE97C6',
         borderWidth: 1,
-        borderRadius: 10,
         marginBottom: 12,
         paddingHorizontal: 8,
+        borderRadius: 8,
+        color: '#EFBCD5',
+    },
+    signUpButton: {
+        backgroundColor: '#8661C1',
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        width: '100%',
+        marginBottom: 20, // Add margin to separate buttons
+    },
+    signUpButtonText: {
+        color: '#EFBCD5',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    goToSignInButton: {
+        backgroundColor: '#4B5267',
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        width: '100%',
+    },
+    goToSignInText: {
+        color: '#EFBCD5',
+        fontSize: 16,
     },
 });
 
